@@ -14,7 +14,8 @@ async function sendMessage() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ message: userText })
+      body: JSON.stringify({ message: userText, botType: "lead" })
+
     });
 
     if (!response.ok) {
