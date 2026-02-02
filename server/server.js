@@ -9,12 +9,9 @@ app.use(express.json());
 const API_KEY = process.env.NVIDIA_API_KEY;
 
 app.post("/chat", async (req, res) => {
-  const { message, botType } = req.body;
+  const userMessage = req.body.message;
 
-  let systemPrompt = "";
-
-  if (botType === "lead") {
-    systemPrompt = `You are an AI lead qualification assistant for a digital marketing agency.
+  const systemPrompt = `You are an AI lead qualification assistant for a digital marketing agency.
 
 Your job is to talk to potential clients and collect the following details step by step:
 1. What service they need (SEO, Ads, Social Media, Website, etc.)
@@ -26,27 +23,9 @@ Your job is to talk to potential clients and collect the following details step 
 Rules:
 - Ask one question at a time.
 - Be friendly and professional.
-- If the user goes off-topic, gently guide back to collecting lead info.
-- When all info is collected, say:
-"Thank you! Our team will contact you soon."`;
-  } else if(botType === "support"){
-    // Default = Customer Support Bot
-    systemPrompt = `You are a customer support assistant for Sunrise Bistro restaurant in New York.
-
-BUSINESS INFORMATION:
-- Opening Hours: 9 AM – 10 PM daily
-- Phone: +1 212-555-1234
-- Cuisine: Italian and Continental
-- Reservations: By phone only
-- Vegan options available
-
-STRICT RULES:
-1. Answer ONLY using the information above.
-2. If asked something outside this info, say:
-"I'm sorry, I don't have that information. Please call the restaurant at +1 212-555-1234 for more details."
-3. Do NOT invent menu items or services.
-4. Keep replies short and professional.`;
-  }
+- If the user goes off-topic, gently guide them back to sharing their project details.
+- When all details are collected, say:
+"Thank you! Our team will review your information and contact you soon."`;
 
   try {
     const response = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
@@ -59,7 +38,7 @@ STRICT RULES:
         model: "meta/llama-3-8b-instruct",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: message }
+          { role: "user", content: userMessage }
         ],
         max_tokens: 200,
         temperature: 0.7
@@ -83,4 +62,4 @@ STRICT RULES:
   }
 });
 
-app.listen(3000, () => console.log("Server running on port 3000"));
+app.listen(3000, () => console.log("Lead bot server running on port 3000"));
