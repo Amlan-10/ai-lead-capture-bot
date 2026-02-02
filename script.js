@@ -68,4 +68,3 @@ document.getElementById("user-input").addEventListener("keypress", function (e) 
     sendMessage();
   }
 });
-cd 
